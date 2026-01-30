@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Application</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+           background: linear-gradient(135deg, #0f172a, #1e293b);
+        }
+
+        /* Card */
+        .container {
+            width: 390px;
+            background: #ffffff;
+            padding: 18px;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Question */
+        #question {
+            background: linear-gradient(90deg, #2563eb, #1d4ed8);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 17px;
+            margin-bottom: 14px;
+        }
+
+        /* Options wrapper */
+        #options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Option */
+        .opt {
+            padding: 10px 12px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+
+        /* Hover */
+        .opt:hover {
+            background: #eef2ff;
+            border-color: #6366f1;
+            transform: translateX(4px);
+        }
+
+        /* Selected */
+        .opt.selected {
+            background: #e0e7ff;
+            border-color: #4f46e5;
+        }
+
+        /* Correct / Wrong (if you enable later) */
+        .correct {
+            background: #dcfce7 !important;
+            border-color: #22c55e !important;
+        }
+
+        .wrong {
+            background: #fee2e2 !important;
+            border-color: #ef4444 !important;
+        }
+
+        /* Button */
+        .btn {
+            margin-top: 14px;
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            background: #4f46e5;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #4338ca;
+            box-shadow: 0 6px 14px rgba(79, 70, 229, 0.4);
+        }
+
+        /* Score container */
+        .score-box {
+            text-align: center;
+            padding: 0px 15px;
+        }
+
+        /* Trophy / emoji */
+        .score-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        /* Score text */
+        .score-title {
+            font-size: 18px;
+            color: #1f2937;
+            margin-bottom: 6px;
+        }
+
+        .score-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+
+        /* Message */
+        .score-msg {
+            font-size: 14px;
+            color: #4b5563;
+        }
+
+        footer {
+            margin-top: 1rem;
+            font-size: 12px;
+            color: #363636;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container" id="container">
+        <h3 id="question">Quiz questions</h3>
+        <div id="options"></div>
+        <button onclick="next()" class="btn">Next</button>
+        <footer>Made with ❤️ using JavaScript</footer>
+    </div>
+
+    <script>
+        const quiz = [
+            {
+                question: "Which language runs in a browser?",
+                options: ["Java", "C", "Python", "JavaScript"],
+                answer: "JavaScript"
+            },
+            {
+                question: "What does CSS stand for?",
+                options: [
+                    "Central Style Sheet",
+                    "Cascading Style Sheets",
+                    "Computer Style Sheet",
+                    "Colorful Style Sheet"
+                ],
+                answer: "Cascading Style Sheets"
+            },
+            {
+                question: "Which HTML tag is used for JavaScript?",
+                options: ["<js>", "<javascript>", "<script>", "<code>"],
+                answer: "<script>"
+            },
+            {
+                question: "Which HTML tag is used to create a hyperlink?",
+                options: ["<a>", "<link>", "<href>", "<hyperlink>"],
+                answer: "<a>"
+            },
+            {
+                question: "What is the correct syntax for an HTML comment?",
+                options: ["// comment", "<!-- comment -->", "/* comment */", " ** comment **"],
+                answer: "<!-- comment -->"
+            }
+        ];
+
+        const questions = document.getElementById("question");
+        const options = document.getElementById("options");
+
+        let Question = 0;
+        let Score = 0;
+        let Answers = "";
+
+        const loadquestion = () => {
+            Answers = "";
+            const q = quiz[Question];
+            questions.innerText = q.question;
+            options.innerHTML = "";
+
+            q.options.forEach(opt => {
+                const box = document.createElement("div");
+                box.className = "opt";
+                box.onclick = () => selected(box, opt);
+                box.innerText = opt;
+                options.appendChild(box);
+            });
+        };
+
+        const selected = (box, opt) => {
+            Answers = opt;
+            document.querySelectorAll(".opt").forEach(el => {
+                el.classList.remove("selected");
+            });
+            box.classList.add("selected");
+        };
+
+        const next = () => {
+            if (!Answers) {
+                alert("choose the answer");
+                return;
+            }
+
+            if (Answers === quiz[Question].answer) {
+                Score++;
+            }
+
+            Question++;
+
+            if (Question < quiz.length) {
+                loadquestion();
+            } else {
+                document.getElementById("container").innerHTML = `
+                     <div class="score-box">
+                         <div class="score-icon">🏆</div>
+                         <div class="score-title">Your Score</div>
+                         <div class="score-value">${Score} / ${quiz.length}</div>
+                         <div class="score-msg">
+                             ${Score >= quiz.length / 2 ? "Good job! Keep learning 🚀" : "Keep practicing, you’ll improve 💪"}
+                         </div>
+                         <footer>Made with ❤️ using JavaScript</footer>
+                     </div>
+`;
+
+            }
+        };
+
+        loadquestion();
+    </script>
+
+</body>
+
+</html>
